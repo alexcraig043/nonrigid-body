@@ -35,6 +35,7 @@ class Node
     {
         if(!this.locked)
         {
+            this.acceleration, this.velocity = createVector(0,0);
             this.acceleration.add(force.x, force.y)
             this.velocity.add(this.acceleration)
             this.position.add(this.velocity)    
@@ -71,9 +72,11 @@ class Stick
         let springForceMagnitude = -this.k * this.getDisplacement()
 
         // The magnitude of the x component of the spring force will be proportional to cos(theta), y component will be proportional to sin(theta)
-        let theta = this.getTheta()
+        let theta = abs(this.getTheta())
+        
         let springForceMagnitudeX = abs(springForceMagnitude * cos(theta))
         let springForceMagnitudeY = abs(springForceMagnitude * sin(theta))
+
 
         // If springForceMagnitude is positive, then Stick will pull Nodes together, if springForceMagnitude is negative, then Stick will push Nodes apart
         if (springForceMagnitude > 0)
@@ -102,9 +105,6 @@ class Stick
         // Sets force vector to x and y components of spring force
         let springForceVector = createVector(springForceMagnitudeX, springForceMagnitudeY)
 
-        // console.log("acceleration: ", this.nodeA.acceleration, "\nspring force: ", springForceVector, '\nsum: ', this.nodeA.acceleration.add(springForceVector))
-        console.log(springForceMagnitudeX)
-
         // Adjust acceleration, velocity, and position of Nodes
         this.nodeA.updateNode(springForceVector)
         this.nodeB.updateNode(springForceVector.mult(-1))
@@ -128,14 +128,14 @@ class Stick
     // Returns current distance between Nodes in x plane
     getDistanceX()
     {
-        let distBetweenNodesX = abs(this.nodeA.position.x - this.nodeB.position.x)
+        let distBetweenNodesX = this.nodeA.position.x - this.nodeB.position.x
         return distBetweenNodesX
     }
 
     // Returns current distance between Nodes in y plane
     getDistanceY()
     {
-        let distBetweenNodesY = abs(this.nodeA.position.y - this.nodeB.position.y)
+        let distBetweenNodesY = this.nodeA.position.y - this.nodeB.position.y
         return distBetweenNodesY
     }
 }

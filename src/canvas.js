@@ -4,8 +4,8 @@ let nodeRadius = 17
 let simulating = false
 let drawingStick = false
 let firstNode, secondNode
-let k = .001 // Spring Constant
-let gravityStrength = .001
+let k = .008 // Spring Constant
+let gravityStrength = .5
 
 function setup()
 {
