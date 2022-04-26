@@ -2,7 +2,6 @@ class Node
 {
     constructor(pos, lock, rad)
     {
-        this.acceleration = createVector(0,0)
         this.velocity = createVector(0,0)
         this.position = createVector(pos.x, pos.y)
         this.locked = lock
@@ -30,21 +29,21 @@ class Node
         this.updateNode(gravityVector)
     }
 
+    // Dampens spring force based on damping coefficient
+    dampenForce(dampingVector)
+    {
+        dampingVector.mult(-c)
+        this.updateNode(dampingVector)
+    }
+
     // Adjusts acceleration, velocity, and position of Node when force is applied:
     updateNode(force)
     {
         if(!this.locked)
         {
-            this.acceleration, this.velocity = createVector(0,0);
-            this.acceleration.add(force.x, force.y)
-            this.velocity.add(this.acceleration)
+            this.velocity.add(force.x, force.y)
             this.position.add(this.velocity)    
         }
-    }
-
-    setAcceleration(acc)
-    {
-        this.acceleration = acc
     }
 }
 
@@ -108,6 +107,10 @@ class Stick
         // Adjust acceleration, velocity, and position of Nodes
         this.nodeA.updateNode(springForceVector)
         this.nodeB.updateNode(springForceVector.mult(-1))
+
+        // Dampen the spring force
+        this.nodeA.dampenForce(springForceVector)
+        this.nodeB.dampenForce(springForceVector.mult(-1))
     }
 
     // Returns the angle between Node A and Node B

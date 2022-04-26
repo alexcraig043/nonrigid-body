@@ -4,8 +4,9 @@ let nodeRadius = 17
 let simulating = false
 let drawingStick = false
 let firstNode, secondNode
-let k = .008 // Spring Constant
-let gravityStrength = .5
+let k = .05 // Spring Coefficient
+let c = .5 // Spring Damping Coefficient
+let gravityStrength = .7
 
 function setup()
 {
