@@ -32,7 +32,7 @@ class Node
     // Dampens spring force based on damping coefficient
     dampenForce(dampingVector)
     {
-        dampingVector.mult(-c)
+        dampingVector.mult(c)
         this.updateNode(dampingVector)
     }
 

@@ -3,6 +3,7 @@ let sticks = []
 let nodeRadius = 17
 let simulating = false
 let drawingStick = false
+let cuttingMode = false
 let firstNode, secondNode
 let k = .05 // Spring Coefficient
 let c = .5 // Spring Damping Coefficient
@@ -60,6 +61,21 @@ function drawElements()
     }
 }
 
+// Clears Elements
+function clearAll()
+{
+    let numNodes = nodes.length
+    let numSticks = sticks.length
+    for (let i = 0; i < numNodes; i++)
+    {
+        nodes.pop()
+    }
+    for (let i = 0; i < numSticks; i++)
+    {
+        sticks.pop()
+    }
+}
+
 // When mouse is pressed, runs logic for click event:
 function mousePressed()
 {
@@ -69,11 +85,14 @@ function mousePressed()
 // Handles logic for click event. Either draws new Node and starts drawing temporary Stick, or connects Stick being drawn to an existing Node
 function clickLogic()
 {
-    let clickedOnNode = false;
-    for (let node of nodes)
+    if (!cuttingMode) 
     {
-        let d = dist(mouseX, mouseY, node.position.x, node.position.y)
+        let clickedOnNode = false;
+        for (let node of nodes)
         {
+            // Get distance between click and nodes
+            let d = dist(mouseX, mouseY, node.position.x, node.position.y)
+    
             // If user clicks on/near an existing node:
             if (d < node.radius * 2)
             {
@@ -81,7 +100,7 @@ function clickLogic()
                 {
                     // If user is not currently drawing a Stick, then start drawing one from clicked on node
                     firstNode = node
-                    drawingStick = true;
+                    drawingStick = true
                 } 
                 else 
                 {
@@ -93,15 +112,44 @@ function clickLogic()
                         firstNode = secondNode
                     }
                 }
-                clickedOnNode = true;
+                clickedOnNode = true
+            }
+        }
+
+        // If user didn't click on existing node and is not drawing a temporary Stick, then make a new Node
+        if (!clickedOnNode && !drawingStick)
+        {
+            newNode(mouseX, mouseY)
+        }
+    }
+    else 
+    {
+        for (let stick of sticks)
+        {
+            console.log(stick)
+            // Get distance between click and stick
+            let d = distClickToStick(mouseX, mouseY, stick)
+            console.log("dist: " + d)
+            if (abs(d) <= 12)
+            {
+                console.log("REMOVING: " + stick)
+                idx = sticks.indexOf(stick)
+                sticks.splice(idx, 1)
+                break
             }
         }
     }
-    // If user didn't click on existing node and is not drawing a temporary Stick, then make a new Node
-    if (!clickedOnNode && !drawingStick)
-    {
-        newNode(mouseX, mouseY)
-    }
+
+
+
+}
+
+function distClickToStick(mouseX, mouseY, stick) {
+    let lineVector = createVector(stick.nodeA.position.x - stick.nodeB.position.x, stick.nodeA.position.y - stick.nodeB.position.y)
+    let nodeToMouseVector = createVector(stick.nodeA.position.x - mouseX, stick.nodeA.position.y - mouseY)
+    let crossProduct = lineVector.cross(nodeToMouseVector);
+    let dist = crossProduct.z / (mag(lineVector.x, lineVector.y))
+    return dist
 }
 
 // If an identical Stick doesn't already exist, the generates a new Stick and appends it to the Sticks array:
@@ -149,13 +197,24 @@ function keyPressed()
     // Stops drawing a temporary Stick when escape is pressed:
     if (keyCode == 27)
     {
-        drawingStick = false;
+        drawingStick = false
     }
     // Toggles physics simulation when Space is pressed:
     if (keyCode == 32)
     {
-        simulating = !simulating;
+        simulating = !simulating
     }
+    // Toggles cutting mode when x is pressed:
+    if (keyCode == 88)
+    {
+        cuttingMode = !cuttingMode
+    }
+    // Clears everything when c is pressed:
+    if (keyCode == 67)
+    {
+        clearAll()
+    }
+
 }
 
 // Re-runs setup() when window is resized:
