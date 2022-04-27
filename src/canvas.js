@@ -139,9 +139,6 @@ function clickLogic()
             }
         }
     }
-
-
-
 }
 
 function distClickToStick(mouseX, mouseY, stick) {
