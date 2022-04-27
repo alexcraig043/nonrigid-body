@@ -6,7 +6,7 @@ let drawingStick = false
 let cuttingMode = false
 let firstNode, secondNode
 let k = .05 // Spring Coefficient
-let c = .5 // Spring Damping Coefficient
+let c = .75 // Spring Damping Coefficient
 let gravityStrength = .7
 
 function setup()
@@ -124,19 +124,23 @@ function clickLogic()
     }
     else 
     {
+        // Remove the stick that click was closest too if click was close enough
+        let minDist = Number.POSITIVE_INFINITY
+        let minIdx = -1
         for (let stick of sticks)
         {
-            console.log(stick)
             // Get distance between click and stick
             let d = distClickToStick(mouseX, mouseY, stick)
-            console.log("dist: " + d)
-            if (abs(d) <= 12)
-            {
-                console.log("REMOVING: " + stick)
-                idx = sticks.indexOf(stick)
-                sticks.splice(idx, 1)
-                break
+            // Reset minDist and minIdx if needed
+            if (abs(d) < abs(minDist)) 
+            { 
+                minDist = d
+                minIdx = sticks.indexOf(stick)
             }
+        }
+        if (abs(minDist) <= 10)
+        {
+            sticks.splice(minIdx, 1)
         }
     }
 }

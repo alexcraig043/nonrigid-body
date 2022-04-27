@@ -80,6 +80,7 @@ class Stick
         // If springForceMagnitude is positive, then Stick will pull Nodes together, if springForceMagnitude is negative, then Stick will push Nodes apart
         if (springForceMagnitude > 0)
         {
+            // PULLING
             if (this.nodeA.position.x > this.nodeB.position.x)
             {
                 springForceMagnitudeX *= -1
@@ -91,6 +92,7 @@ class Stick
         }
         if (springForceMagnitude < 0)
         {
+            // PUSHING
             if (this.nodeA.position.x < this.nodeB.position.x)
             {
                 springForceMagnitudeX *= -1
