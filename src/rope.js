@@ -55,12 +55,13 @@ class Stick
         this.nodeB = secondNode
         this.k = springConstant
         this.equilibrium = dist(this.nodeA.position.x, this.nodeA.position.y, this.nodeB.position.x, this.nodeB.position.y)
+        this.weight = 2
     }
 
     show()
     {
         stroke('#fffafa')
-        strokeWeight(2)
+        strokeWeight(this.weight)
         line(this.nodeA.position.x, this.nodeA.position.y, this.nodeB.position.x, this.nodeB.position.y)
     }
 

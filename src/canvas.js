@@ -3,7 +3,10 @@ let sticks = []
 let nodeRadius = 17
 let simulating = false
 let drawingStick = false
+let currMoving = false
+let movedNode
 let cuttingMode = false
+let drawingMode = true
 let firstNode, secondNode
 let k = .05 // Spring Coefficient
 let c = .75 // Spring Damping Coefficient
@@ -76,6 +79,12 @@ function clearAll()
     }
 }
 
+// When mouse is released, stop moving node
+function mouseReleased()
+{
+    currMoving = false
+}
+
 // When mouse is clicked, runs logic for click event:
 function mousePressed()
 {
@@ -85,13 +94,20 @@ function mousePressed()
 // Cuts sticks when mouse is dragged
 function mouseDragged()
 {
-    cutSticks()
+    if (cuttingMode)
+    {
+        cutSticks()
+    }
+    if (currMoving)
+    {
+        dragNode(movedNode)
+    }
 }
 
 // Handles logic for click event. Either draws new Node and starts drawing temporary Stick, or connects Stick being drawn to an existing Node
 function clickLogic()
 {
-    if (!cuttingMode)
+    if (drawingMode)
     {
         let clickedOnNode = false;
         for (let node of nodes)
@@ -130,28 +146,51 @@ function clickLogic()
             newNode(mouseX, mouseY)
         }
     }
+
+    else if (movingMode)
+    {
+        for (let node of nodes)
+        {
+            if (clickedOnNode(node) && !currMoving)
+            {
+                 
+                currMoving = true
+                movedNode = node
+            }
+        }
+    }
+}
+
+function dragNode(node)
+{
+    node.position.x = mouseX
+    node.position.y = mouseY
+}
+
+function clickedOnNode(node) {
+    // Get distance between click and nodes
+    const d = dist(mouseX, mouseY, node.position.x, node.position.y)
+    if (d < node.radius * 2) return true
 }
 
 // Cuts sticks that the mouse passes over
 function cutSticks()
 {
-    if (cuttingMode) {
-        for (let stick of sticks)
+    for (let stick of sticks)
+    {
+        const d = abs(distClickToStick(stick))
+        // Check if curr mouse pos is on line
+        if (d <= 10)
         {
-            const d = abs(distClickToStick(stick))
-            // Check if curr mouse pos is on line
-            if (d <= 10)
+            // Check if mouse is within bounds of segment
+            if (stick.nodeA.position.x - 10 < mouseX && mouseX < stick.nodeB.position.x + 10 || stick.nodeB.position.x - 10 < mouseX && mouseX < stick.nodeA.position.x + 10)
             {
-                // Check if mouse is within bounds of segment
-                if (stick.nodeA.position.x - 10 < mouseX && mouseX < stick.nodeB.position.x + 10 || stick.nodeB.position.x - 10 < mouseX && mouseX < stick.nodeA.position.x + 10)
+                if (stick.nodeA.position.y - 10 < mouseY && mouseY < stick.nodeB.position.y + 10 || stick.nodeB.position.y - 10 < mouseY && mouseY < stick.nodeA.position.y + 10)
                 {
-                    if (stick.nodeA.position.y - 10 < mouseY && mouseY < stick.nodeB.position.y + 10 || stick.nodeB.position.y - 10 < mouseY && mouseY < stick.nodeA.position.y + 10)
-                    {
-                        // Delete stick
-                        playSound('assets/cut.mp3', false)
-                        idx = sticks.indexOf(stick)
-                        sticks.splice(idx, 1)
-                    }
+                    // Delete stick
+                    playSound('assets/cut.mp3', false)
+                    idx = sticks.indexOf(stick)
+                    sticks.splice(idx, 1)
                 }
             }
         }
@@ -235,11 +274,28 @@ function keyPressed()
     {
         simulating = !simulating
     }
-    // Toggles cutting mode when x is pressed:
+    // Engages drawing mode when d is pressed:
+    if (keyCode == 68)
+    {
+        cuttingMode = false
+        drawingMode = true
+        currMoving = false
+    }
+    // Engages cutting mode when m is pressed:
+    if (keyCode == 77)
+    {
+        cuttingMode = false
+        drawingMode = false
+        movingMode = true
+        drawingStick = false
+    }
+    // Engages cutting mode when x is pressed:
     if (keyCode == 88)
     {
-        cuttingMode = !cuttingMode
-        if (cuttingMode) drawingStick = false
+        cuttingMode = true
+        drawingMode = false
+        movingMode = false
+        drawingStick = false
     }
     // Clears everything when c is pressed:
     if (keyCode == 67)
