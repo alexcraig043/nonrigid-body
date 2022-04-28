@@ -29,6 +29,10 @@ function draw()
     {
         simulatePhysics();
     }
+    if (currMoving)
+    {
+        dragNode(movedNode)
+    }
 }
 
 // Handles physics simulations of gravity onto Nodes and spring force of Sticks onto Nodes
@@ -98,10 +102,6 @@ function mouseDragged()
     {
         cutSticks()
     }
-    if (currMoving)
-    {
-        dragNode(movedNode)
-    }
 }
 
 // Handles logic for click event. Either draws new Node and starts drawing temporary Stick, or connects Stick being drawn to an existing Node
@@ -153,7 +153,6 @@ function clickLogic()
         {
             if (clickedOnNode(node) && !currMoving)
             {
-                 
                 currMoving = true
                 movedNode = node
             }

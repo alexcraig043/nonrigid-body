@@ -77,7 +77,6 @@ class Stick
         let springForceMagnitudeX = abs(springForceMagnitude * cos(theta))
         let springForceMagnitudeY = abs(springForceMagnitude * sin(theta))
 
-
         // If springForceMagnitude is positive, then Stick will pull Nodes together, if springForceMagnitude is negative, then Stick will push Nodes apart
         if (springForceMagnitude > 0)
         {
