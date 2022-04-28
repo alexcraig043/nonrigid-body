@@ -76,22 +76,28 @@ function clearAll()
     }
 }
 
-// When mouse is pressed, runs logic for click event:
+// When mouse is clicked, runs logic for click event:
 function mousePressed()
 {
     clickLogic();
 }
 
+// Cuts sticks when mouse is dragged
+function mouseDragged()
+{
+    cutSticks()
+}
+
 // Handles logic for click event. Either draws new Node and starts drawing temporary Stick, or connects Stick being drawn to an existing Node
 function clickLogic()
 {
-    if (!cuttingMode) 
+    if (!cuttingMode)
     {
         let clickedOnNode = false;
         for (let node of nodes)
         {
             // Get distance between click and nodes
-            let d = dist(mouseX, mouseY, node.position.x, node.position.y)
+            const d = dist(mouseX, mouseY, node.position.x, node.position.y)
     
             // If user clicks on/near an existing node:
             if (d < node.radius * 2)
@@ -99,6 +105,7 @@ function clickLogic()
                 if (!drawingStick)
                 {
                     // If user is not currently drawing a Stick, then start drawing one from clicked on node
+                    // playSound('assets/rope.mov', true)
                     firstNode = node
                     drawingStick = true
                 } 
@@ -108,6 +115,7 @@ function clickLogic()
                     secondNode = node
                     if (!stickAlreadyExists(firstNode, secondNode))
                     {
+                        // playSound('assets/rope.mov', true)
                         newStick(firstNode, secondNode)
                         firstNode = secondNode
                     }
@@ -115,42 +123,45 @@ function clickLogic()
                 clickedOnNode = true
             }
         }
-
+    
         // If user didn't click on existing node and is not drawing a temporary Stick, then make a new Node
         if (!clickedOnNode && !drawingStick)
         {
             newNode(mouseX, mouseY)
         }
     }
-    else 
-    {
-        // Remove the stick that click was closest too if click was close enough
-        let minDist = Number.POSITIVE_INFINITY
-        let minIdx = -1
-        for (let stick of sticks)
-        {
-            // Get distance between click and stick
-            let d = distClickToStick(mouseX, mouseY, stick)
-            // Reset minDist and minIdx if needed
-            if (abs(d) < abs(minDist)) 
-            { 
-                minDist = d
-                minIdx = sticks.indexOf(stick)
-            }
-        }
-        if (abs(minDist) <= 10)
-        {
-            sticks.splice(minIdx, 1)
-        }
-    }
 }
 
-function distClickToStick(mouseX, mouseY, stick) {
-    let lineVector = createVector(stick.nodeA.position.x - stick.nodeB.position.x, stick.nodeA.position.y - stick.nodeB.position.y)
-    let nodeToMouseVector = createVector(stick.nodeA.position.x - mouseX, stick.nodeA.position.y - mouseY)
-    let crossProduct = lineVector.cross(nodeToMouseVector);
-    let dist = crossProduct.z / (mag(lineVector.x, lineVector.y))
-    return dist
+// Cuts sticks that the mouse passes over
+function cutSticks()
+{
+    if (cuttingMode) {
+        for (let stick of sticks)
+        {
+            // Get eq of line for that stick
+            let slope = (stick.nodeA.position.y - stick.nodeB.position.y) / (stick.nodeA.position.x - stick.nodeB.position.x)
+            let yIntercept = (stick.nodeA.position.y - (slope * stick.nodeA.position.x))
+            
+            // Look at mouse point
+            let outPut = (slope * mouseX) + yIntercept
+            const d = dist(mouseX, mouseY, mouseX, outPut)
+            // Check if curr mouse pos is on line
+            if (d <= 10)
+            {
+                // Check if mouse is within bounds of segment
+                if (stick.nodeA.position.x < mouseX && mouseX < stick.nodeB.position.x || stick.nodeB.position.x < mouseX && mouseX < stick.nodeA.position.x)
+                {
+                    if (stick.nodeA.position.y < mouseY && mouseY < stick.nodeB.position.y || stick.nodeB.position.y < mouseY && mouseY < stick.nodeA.position.y)
+                    {
+                        // Delete stick
+                        playSound('assets/cut.mp3', false)
+                        idx = sticks.indexOf(stick)
+                        sticks.splice(idx, 1)
+                    }
+                }
+            }
+        }
+    }
 }
 
 // If an identical Stick doesn't already exist, the generates a new Stick and appends it to the Sticks array:
@@ -177,11 +188,28 @@ function newNode(x, y)
     let pos = createVector(x, y)
     if (keyIsDown(SHIFT))
     {
+        playSound('assets/fixedPop.mp3', false)
         nodes.push(new Node(pos, true, nodeRadius))
     } else
     {
+        playSound('assets/pop.mp3', false)
         nodes.push(new Node(pos, false, nodeRadius))
     }
+}
+
+function playSound(file, isRope)
+{
+    var sound = document.createElement('audio')
+    sound.src = file
+    document.body.appendChild(sound)
+
+    sound.play()
+
+    sound.onended = function () {
+        this.parentNode.removeChild(this);
+    }
+  
+
 }
 
 // Draws a temporary Stick from previously clicked Node to current mouse position:
@@ -209,13 +237,13 @@ function keyPressed()
     if (keyCode == 88)
     {
         cuttingMode = !cuttingMode
+        if (cuttingMode) drawingStick = false
     }
     // Clears everything when c is pressed:
     if (keyCode == 67)
     {
         clearAll()
     }
-
 }
 
 // Re-runs setup() when window is resized:
