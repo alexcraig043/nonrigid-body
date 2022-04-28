@@ -138,20 +138,14 @@ function cutSticks()
     if (cuttingMode) {
         for (let stick of sticks)
         {
-            // Get eq of line for that stick
-            let slope = (stick.nodeA.position.y - stick.nodeB.position.y) / (stick.nodeA.position.x - stick.nodeB.position.x)
-            let yIntercept = (stick.nodeA.position.y - (slope * stick.nodeA.position.x))
-            
-            // Look at mouse point
-            let outPut = (slope * mouseX) + yIntercept
-            const d = dist(mouseX, mouseY, mouseX, outPut)
+            const d = abs(distClickToStick(stick))
             // Check if curr mouse pos is on line
             if (d <= 10)
             {
                 // Check if mouse is within bounds of segment
-                if (stick.nodeA.position.x < mouseX && mouseX < stick.nodeB.position.x || stick.nodeB.position.x < mouseX && mouseX < stick.nodeA.position.x)
+                if (stick.nodeA.position.x - 10 < mouseX && mouseX < stick.nodeB.position.x + 10 || stick.nodeB.position.x - 10 < mouseX && mouseX < stick.nodeA.position.x + 10)
                 {
-                    if (stick.nodeA.position.y < mouseY && mouseY < stick.nodeB.position.y || stick.nodeB.position.y < mouseY && mouseY < stick.nodeA.position.y)
+                    if (stick.nodeA.position.y - 10 < mouseY && mouseY < stick.nodeB.position.y + 10 || stick.nodeB.position.y - 10 < mouseY && mouseY < stick.nodeA.position.y + 10)
                     {
                         // Delete stick
                         playSound('assets/cut.mp3', false)
@@ -162,6 +156,14 @@ function cutSticks()
             }
         }
     }
+}
+
+function distClickToStick(stick) {
+    let lineVector = createVector(stick.nodeA.position.x - stick.nodeB.position.x, stick.nodeA.position.y - stick.nodeB.position.y)
+    let nodeToMouseVector = createVector(stick.nodeA.position.x - mouseX, stick.nodeA.position.y - mouseY)
+    let crossProduct = lineVector.cross(nodeToMouseVector);
+    let dist = crossProduct.z / (mag(lineVector.x, lineVector.y))
+    return dist
 }
 
 // If an identical Stick doesn't already exist, the generates a new Stick and appends it to the Sticks array:
