@@ -13,7 +13,8 @@ class Node
         strokeWeight(0)
         if (!this.locked)
         {
-            fill(51) 
+            fill(51)
+            // #5a7de6
         } 
         else
         {

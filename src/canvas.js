@@ -37,7 +37,7 @@ function draw()
     noFill()
     circle(infoImg.width / 50, infoImg.height / 50, infoImg.width/50)
     image(infoImg, infoImg.width / 100, infoImg.height / 100, infoImg.width / 50, infoImg.height / 50)
-    if (drawingInfo)
+    if (nodes.length <= 0 || drawingInfo)
     {
         drawInfo()
     }
@@ -259,6 +259,8 @@ function stickAlreadyExists(a, b)
 // Generates a new Node and appends it to the Nodes array, also handles logic of whether new Node is fixed:
 function newNode(x, y)
 {
+    // Stop drawing info if this is the first node
+    if (nodes.length <= 0) drawingInfo = false
     let pos = createVector(x, y)
     if (keyIsDown(SHIFT))
     {
