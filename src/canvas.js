@@ -9,7 +9,7 @@ let cuttingMode = false
 let drawingMode = true
 let firstNode, secondNode
 let k = .05 // Spring Coefficient
-let c = .75 // Spring Damping Coefficient
+let c = .8 // Spring Damping Coefficient
 let gravityStrength = .7
 
 function setup()
