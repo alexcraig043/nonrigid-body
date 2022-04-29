@@ -13,7 +13,7 @@ class Node
         strokeWeight(0)
         if (!this.locked)
         {
-            fill('#fffafa') 
+            fill(51) 
         } 
         else
         {
@@ -60,7 +60,7 @@ class Stick
 
     show()
     {
-        stroke('#fffafa')
+        stroke(51)
         strokeWeight(this.weight)
         line(this.nodeA.position.x, this.nodeA.position.y, this.nodeB.position.x, this.nodeB.position.y)
     }

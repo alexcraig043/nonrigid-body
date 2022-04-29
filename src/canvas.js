@@ -9,21 +9,34 @@ let cuttingMode = false
 let drawingMode = true
 let firstNode, secondNode
 let k = .05 // Spring Coefficient
-let c = .8 // Spring Damping Coefficient
+let c = .75 // Spring Damping Coefficient
 let gravityStrength = .7
+
+// GUI
+let infoImg
+let drawingInfo = false
 
 function setup()
 {
     createCanvas(windowWidth, windowHeight)
     angleMode(DEGREES)
+
+    infoImg = loadImage('assets/info.png')    
 }
 
 function draw()
 {
     clear()
-    background(51)
+    background('#F0EAD6')
     
     drawElements();
+
+    // Display GUI
+    image(infoImg, infoImg.width / 100, infoImg.height / 100, infoImg.width / 50, infoImg.height / 50)
+    if (drawingInfo)
+    {
+        drawInfo()
+    }
 
     if (simulating)
     {
@@ -33,6 +46,18 @@ function draw()
     {
         dragNode(movedNode)
     }
+}
+
+// Info graphic on controls, etc
+function drawInfo()
+{
+    fill(51)
+    rectMode(CENTER)
+    textAlign(CENTER, TOP)
+    strokeWeight(1)
+    textSize(18)
+    stroke(51)
+    text("\nINSTRUCTIONS:\n\nPress d for drawing mode. When in drawing mode, click to draw non-fixed nodes and shift-click to draw fixed nodes. Click on nodes to connect them with springs, and press escape to stop drawing a spring.\n\nPress x for cutting mode. When in cutting mode, drag mouse over springs to delete them.\n\nPress m for moving mode. When in moving mode, you can click and drag any node.\n\nPress space to toggle physics.\n\nPress c to clear all elements.", windowWidth/2, windowHeight/3, windowWidth/2.75, windowHeight/2)
 }
 
 // Handles physics simulations of gravity onto Nodes and spring force of Sticks onto Nodes
@@ -107,7 +132,12 @@ function mouseDragged()
 // Handles logic for click event. Either draws new Node and starts drawing temporary Stick, or connects Stick being drawn to an existing Node
 function clickLogic()
 {
-    if (drawingMode)
+    if (dist(mouseX, mouseY, infoImg.width / 100, infoImg.height / 100) < infoImg.width / 30)
+    {
+        // User clicked on info image
+        drawingInfo = !drawingInfo
+    }
+    else if (drawingMode)
     {
         let clickedOnNode = false;
         for (let node of nodes)
@@ -248,14 +278,12 @@ function playSound(file, isRope)
     sound.onended = function () {
         this.parentNode.removeChild(this);
     }
-  
-
 }
 
 // Draws a temporary Stick from previously clicked Node to current mouse position:
 function drawTempStick(fromNode)
 {
-    stroke('#fffafa')
+    stroke(51)
     strokeWeight(2)
     line(fromNode.position.x, fromNode.position.y, mouseX, mouseY)
 }
