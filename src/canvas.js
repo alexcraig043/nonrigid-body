@@ -14,7 +14,7 @@ let gravityStrength = .7
 
 // GUI
 let infoImg
-let drawingInfo = false
+let drawingInfo = true
 
 function setup()
 {
@@ -32,6 +32,10 @@ function draw()
     drawElements();
 
     // Display GUI
+    stroke(51)
+    strokeWeight(4)
+    noFill()
+    circle(infoImg.width / 50, infoImg.height / 50, infoImg.width/50)
     image(infoImg, infoImg.width / 100, infoImg.height / 100, infoImg.width / 50, infoImg.height / 50)
     if (drawingInfo)
     {
@@ -57,7 +61,7 @@ function drawInfo()
     strokeWeight(1)
     textSize(18)
     stroke(51)
-    text("\nINSTRUCTIONS:\n\nPress d for drawing mode. When in drawing mode, click to draw non-fixed nodes and shift-click to draw fixed nodes. Click on nodes to connect them with springs, and press escape to stop drawing a spring.\n\nPress x for cutting mode. When in cutting mode, drag mouse over springs to delete them.\n\nPress m for moving mode. When in moving mode, you can click and drag any node.\n\nPress space to toggle physics.\n\nPress c to clear all elements.", windowWidth/2, windowHeight/3, windowWidth/2.75, windowHeight/2)
+    text("\nINSTRUCTIONS:\n\nPress d for drawing mode. When in drawing mode, click to draw non-fixed nodes and shift-click to draw fixed nodes. Click on nodes to connect them with springs, and press escape to stop drawing a spring.\n\nPress x for cutting mode. When in cutting mode, drag mouse over springs to delete them.\n\nPress m for moving mode. When in moving mode, you can click and drag any node.\n\nPress space to toggle physics.\n\nPress c to clear all elements.", windowWidth/2, windowHeight/1.5, windowWidth/2.75, windowHeight)
 }
 
 // Handles physics simulations of gravity onto Nodes and spring force of Sticks onto Nodes
@@ -335,4 +339,5 @@ function keyPressed()
 function windowResized()
 {
     setup();
+    draw();
 }
