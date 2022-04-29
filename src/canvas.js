@@ -52,9 +52,9 @@ function draw()
     }
 }
 
-// Info graphic on controls, etc
 function drawInfo()
 {
+    // Draws instruction text
     fill(51)
     rectMode(CENTER)
     textAlign(CENTER, TOP)
